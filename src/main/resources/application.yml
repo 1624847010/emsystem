@@ -1,0 +1,30 @@
+mybatis:
+  config-location: classpath:mybatis/mybatis.cfg.xml
+  mapper-locations: classpath:mybatis/mapper/*.xml
+  type-aliases-package: com.em.vo
+server:
+  port: 9611
+spring:
+  application:
+    name: EMSystem
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/em?characterEncoding=utf8&useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: root
+    password: 123
+logging:
+  level:
+    com.em.mapper : debug
+    com.em.service : debug
+    com.em.controller : debug
+
+# 分页配置
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+# fdfs
+fdfs:
+  tracker-list: 49.234.6.119:22122
+  hostPort: http://fdfs.litongxin.cn/
