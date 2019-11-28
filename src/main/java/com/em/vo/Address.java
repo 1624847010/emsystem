@@ -37,7 +37,7 @@ public class Address implements Serializable {
      *
      * @mbg.generated Tue Nov 12 16:34:42 CST 2019
      */
-    private Double phone;
+    private long phone;
 
     /**
      *
@@ -172,7 +172,7 @@ public class Address implements Serializable {
      *
      * @mbg.generated Tue Nov 12 16:34:42 CST 2019
      */
-    public Double getPhone() {
+    public long getPhone() {
         return phone;
     }
 
@@ -184,7 +184,7 @@ public class Address implements Serializable {
      *
      * @mbg.generated Tue Nov 12 16:34:42 CST 2019
      */
-    public void setPhone(Double phone) {
+    public void setPhone(long phone) {
         this.phone = phone;
     }
 

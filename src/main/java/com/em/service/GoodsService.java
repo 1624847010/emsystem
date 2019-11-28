@@ -11,8 +11,14 @@ public interface GoodsService {
 
     int updateGoods(Goods goods);
 
-    List<Goods> selectGoods(int pageSize, int pageNum, String goodsName);
+    List<Goods> selectGoods(int pageSize, int pageNum, String goodsName,Integer shopId);
 
     //根据分类查询goodsList
     List<Goods> selectGoodsByType(int shopId,int typeId);
+
+    List<Goods> selectGoodsById(String goods);
+    //查询销售数量
+    Integer selectSaleCount(Long id);
+
+    int selectCount(Integer id);
 }

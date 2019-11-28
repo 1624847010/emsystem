@@ -26,9 +26,9 @@
 <!--        <table tableName="file">-->
 <!--            <property name="modelOnly" value="false"/>-->
 <!--        </table>-->
-<!--        <table tableName="goods">-->
-<!--            <property name="modelOnly" value="false"/>-->
-<!--        </table>-->
+        <table tableName="goods">
+            <property name="modelOnly" value="false"/>
+        </table>
 <!--        <table tableName="merchant">-->
 <!--            <property name="modelOnly" value="false"/>-->
 <!--        </table>-->
@@ -38,9 +38,9 @@
 <!--        <table tableName="type">-->
 <!--            <property name="modelOnly" value="false"/>-->
 <!--        </table>-->
-        <table tableName="pay">
-            <property name="modelOnly" value="false"/>
-        </table>
+<!--        <table tableName="pay">-->
+<!--            <property name="modelOnly" value="false"/>-->
+<!--        </table>-->
 <!--        <table tableName="slideshow">-->
 <!--            <property name="modelOnly" value="false"/>-->
 <!--        </table>-->

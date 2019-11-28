@@ -31,9 +31,9 @@ public class FileController {
     @ApiOperation(value = "上传文件")
     @PostMapping("/uploadFile")
     public ResponseEntity<BaseResponse<User>> uploadFile(MultipartFile file){
-        File file1 = fileService.uploadFile(file);
-        if (file1!=null) {
-            return BaseResponse.generateOKResponseEntity("上传成功", file1);
+        File theFile = fileService.uploadFile(file);
+        if (theFile!=null) {
+            return BaseResponse.generateOKResponseEntity("上传成功", theFile);
         }else {
             return BaseResponse.generateBadResponseEntity(500,"上传失败","");
         }
@@ -61,6 +61,7 @@ public class FileController {
             return BaseResponse.generateBadResponseEntity(500,"查询失败失败，返回默认图片",fileService.selectFile(file));
         }
     }
+
     @ApiOperation(value = "保存图片")
     @PostMapping("/saveFile")
     public ResponseEntity<BaseResponse<User>> saveFile(@RequestBody File file){

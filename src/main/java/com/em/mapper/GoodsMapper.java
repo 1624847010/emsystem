@@ -63,4 +63,6 @@ public interface GoodsMapper {
      * @mbg.generated Mon Nov 18 18:45:27 CST 2019
      */
     int updateByExample(@Param("record") Goods record, @Param("example") GoodsExample example);
+
+    Integer selectSaleCountByShopId(@Param("shopId")Long id);
 }

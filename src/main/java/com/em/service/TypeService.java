@@ -14,4 +14,6 @@ public interface TypeService {
     List<Type> selectShopType();
 
     List<Type> selectGoodsType(int shopId);
+
+    int selectCount(Long id);
 }

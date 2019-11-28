@@ -4,7 +4,18 @@ import java.io.Serializable;
 import java.util.List;
 
 public class Type implements Serializable {
+    //分类图标
+    private File file;
+    //商家分类下商品列表
     private List<Goods> goodsList;
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
 
     public List<Goods> getGoodsList() {
         return goodsList;

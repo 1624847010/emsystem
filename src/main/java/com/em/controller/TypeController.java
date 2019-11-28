@@ -37,10 +37,15 @@ public class TypeController {
     @DeleteMapping("/delType")
     public ResponseEntity<BaseResponse<Type>> delType(@RequestBody Type type){
         int count = typeService.delType(type);
-        if (count > 0) {
-            return BaseResponse.generateOKResponseEntity("删除成功","");
-        }else {
-            return BaseResponse.generateBadResponseEntity("删除失败","");
+        switch (count){
+            case 1:
+                return BaseResponse.generateOKResponseEntity("删除成功","");
+            case 2:
+                return BaseResponse.generateBadResponseEntity("删除失败,该分类下有商家", "");
+            case 3:
+                return BaseResponse.generateBadResponseEntity("删除失败,该分类下有商品", "");
+            default:
+                return BaseResponse.generateBadResponseEntity("删除失败", "");
         }
     }
     @ApiOperation(value = "修改分类")

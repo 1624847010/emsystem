@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.util.List;
 
 public class Merchant implements Serializable {
+    //商家平均评分
+    private float sumGrade;
+    //商品销量
+    private Integer saleCount;
     //商家头像
     private File file;
     //商家图片介绍
@@ -327,5 +331,20 @@ public class Merchant implements Serializable {
      */
     public void setLunchBox(Float lunchBox) {
         this.lunchBox = lunchBox;
+    }
+    public float getSumGrade() {
+        return sumGrade;
+    }
+
+    public void setSumGrade(float sumGrade) {
+        this.sumGrade = sumGrade;
+    }
+
+    public Integer getSaleCount() {
+        return saleCount;
+    }
+
+    public void setSaleCount(Integer saleCount) {
+        this.saleCount = saleCount;
     }
 }

@@ -38,16 +38,14 @@ public class MerchantController {
     //查询所有商家
     @ApiOperation(value = "查询所有商家")
     @GetMapping("/selectMerchantList")
-    public ResponseEntity<BaseResponse<Merchant>> selectMerchantList(@RequestParam("pageSize") int pageSize,@RequestParam("pageNum") int pageNum,@RequestParam("shopName")String shopName,@RequestParam("type")Integer type){
-        if (type == 0) {
+    public ResponseEntity<BaseResponse<Merchant>> selectMerchantList(@RequestParam(defaultValue = "10") int pageSize,
+                                                                     @RequestParam(defaultValue = "1") int pageNum,
+                                                                     @RequestParam(defaultValue = "")String shopName,
+                                                                     @RequestParam(defaultValue = "0")Integer type,//商家id，0则为用户与管理员
+                                                                     @RequestParam(defaultValue = "0")Integer shopType){//分类id
             //当前身份为管理员查询所有商家列表
-            List<Merchant> list = merchantService.selectMerchantList(pageSize,pageNum,shopName);
+            List<Merchant> list = merchantService.selectMerchantList(pageSize,pageNum,shopName,shopType,type);
             return BaseResponse.generateOKListResponseEntity(list);
-        }else{
-            //当前身份为商家仅查询当前商家列表
-            List<Merchant> list = merchantService.selectMerchantListByType(pageSize,pageNum,shopName,type);
-            return BaseResponse.generateOKListResponseEntity(list);
-        }
     }
     //修改商家信息
     @ApiOperation(value = "修改商家")
@@ -67,8 +65,10 @@ public class MerchantController {
         int count = merchantService.delMerchant(merchant);
         if (count > 0) {
             return BaseResponse.generateOKResponseEntity("修改成功","");
-        }else {
-            return BaseResponse.generateBadResponseEntity("修改失败","");
+        }else if (count == -1) {
+            return BaseResponse.generateBadResponseEntity("修改失败,该商家目录下有分类","");
+        }{
+                return BaseResponse.generateBadResponseEntity("修改失败","");
         }
     }
 }

@@ -34,4 +34,6 @@ public interface UserMapper {
 
     //删除用户
     int delUser(User user);
+
+    User phoneSelect(User user);
 }

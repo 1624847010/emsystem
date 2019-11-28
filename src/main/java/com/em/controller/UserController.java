@@ -4,9 +4,7 @@ import com.em.mapper.FileMapper;
 import com.em.service.UserService;
 import com.em.util.BaseResponse;
 import com.em.util.IDUtil;
-import com.em.vo.File;
 import com.em.vo.User;
-import com.fasterxml.jackson.databind.ser.Serializers;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.logging.Log;
@@ -15,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author ll
@@ -31,13 +26,14 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserService userService;
-    @Autowired
-    private FileMapper fileMapper;
+
     private final Log log = LogFactory.getLog(getClass());
 
     @ApiOperation(value = "分页查询用户")
     @GetMapping(value = "/getUserList")
-    public ResponseEntity<BaseResponse<User>> getUserList(@RequestParam("pageSize") int pageSize,@RequestParam("pageNum") int pageNum,@RequestParam("name")String name){
+    public ResponseEntity<BaseResponse<User>> getUserList(@RequestParam(defaultValue = "10") int pageSize,
+                                                          @RequestParam(defaultValue = "1") int pageNum,
+                                                          @RequestParam(defaultValue = "")String name){
         try {
             //获取用户列表
             List<User> userList = userService.getUserList(pageSize,pageNum,name);
@@ -50,7 +46,7 @@ public class UserController {
     @ApiOperation(value = "用户登陆")
     @PostMapping(value = "/login")
     public ResponseEntity<BaseResponse<User>> login(@RequestBody User user){
-        User theUser = userService.loginSelect(user);
+        User theUser = userService.phoneSelect(user);
         if (theUser == null) {
             return BaseResponse.generateBadResponseEntity(500,"账户不存在","");
         }
@@ -59,7 +55,7 @@ public class UserController {
         }
         return BaseResponse.generateOKResponseEntity("登陆成功",theUser);
     }
-    @ApiOperation(value = "id查询信息")
+    @ApiOperation(value = "根据用户id返回用户信息")
     @PostMapping(value = "/selectById")
     public ResponseEntity<BaseResponse<User>> selectById(@RequestBody User user){
         User theUser = userService.loginSelect(user);
@@ -68,7 +64,8 @@ public class UserController {
     @ApiOperation(value = "新增用户")
     @PostMapping(value = "/addUser")
     public ResponseEntity<BaseResponse<User>> addUser(@RequestBody User user){
-        User theUser = userService.loginSelect(user);
+        //判断手机号是否存在
+        User theUser = userService.phoneSelect(user);
         if (theUser != null) {
             return BaseResponse.generateBadResponseEntity(500,"新增失败,手机号已被注册","");
         }

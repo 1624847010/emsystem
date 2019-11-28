@@ -57,8 +57,11 @@ public class GoodsController {
     }
     @ApiOperation(value = "查询商品列表")
     @GetMapping("/selectGoods")
-    public ResponseEntity<BaseResponse<Goods>> selectGoods(@RequestParam("pageSize") int pageSize,@RequestParam("pageNum") int pageNum,@RequestParam("goodsName")String goodsName){
-        List<Goods> list = goodsService.selectGoods(pageSize,pageNum,goodsName);
+    public ResponseEntity<BaseResponse<Goods>> selectGoods(@RequestParam(defaultValue = "10") Integer pageSize,
+                                                           @RequestParam(defaultValue = "1") Integer pageNum,
+                                                           @RequestParam(defaultValue = "")String goodsName,
+                                                           @RequestParam() Integer shopId){
+        List<Goods> list = goodsService.selectGoods(pageSize,pageNum,goodsName,shopId);
         return BaseResponse.generateOKListResponseEntity(list);
     }
 }

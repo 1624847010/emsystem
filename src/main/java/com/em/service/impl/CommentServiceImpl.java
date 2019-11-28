@@ -3,10 +3,11 @@ package com.em.service.impl;
 import com.em.mapper.CommentMapper;
 import com.em.service.CommentService;
 import com.em.service.FileService;
-import com.em.vo.Address;
+import com.em.service.UserService;
 import com.em.vo.Comment;
 import com.em.vo.CommentExample;
 import com.em.vo.File;
+import com.em.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,35 +26,53 @@ public class CommentServiceImpl implements CommentService {
     private CommentMapper commentMapper;
     @Autowired
     private FileService fileService;
+    @Autowired
+    private UserService userService;
     //评论管理的业务id
     private Integer commentType = 4;
 
 
     @Override
-    public List<Comment> getCommentList(Integer shopId, Integer id) {
+    public List<Comment> getCommentList(Integer shopId, Integer id,Integer pageSize,Integer pageNum) {
         CommentExample example = new CommentExample();
+        example.setNum((pageNum-1)*pageSize);
+        example.setSize(pageSize);
+        example.setOrderByClause("id desc");
         switch (id){
+            //好评
             case 1:
                 example.createCriteria().andShopIdEqualTo(shopId).andGradeGreaterThanOrEqualTo(3f);
                 break;
+            //差评
             case 0:
                 example.createCriteria().andShopIdEqualTo(shopId).andGradeLessThan(3F);
                 break;
+             //全部
             default:
                 example.createCriteria().andShopIdEqualTo(shopId);
                 break;
         }
         List<Comment> comments = commentMapper.selectByExample(example);
+        setImgAndUser(comments);
+        return comments;
+    }
+    //设置图片和用户
+    private void setImgAndUser(List<Comment> comments) {
         for (int i = 0; i <comments.size() ; i++) {
+            //插入图片
             File file = new File();
             file.setBusinessId(Math.toIntExact(comments.get(i).getId()));
             file.setBusinessType(commentType);
             List<File> list = fileService.selectFile(file);
+            //插入用户
+            User user = new User();
+            user.setId(Long.valueOf(comments.get(i).getUserId()));
+            User theUser = userService.loginSelect(user);
             if(list != null){
                 comments.get(i).setImg(list.get(0));
             }
+            comments.get(i).setUser(theUser);
         }
-        return comments;
     }
 
     @Override
@@ -69,5 +88,24 @@ public class CommentServiceImpl implements CommentService {
             fileService.saveFile(file);
         }
         return i;
+    }
+    //根据id查询评论
+    @Override
+    public Comment selectById(Integer id) {
+        CommentExample example = new CommentExample();
+        example.createCriteria().andIdEqualTo(Long.valueOf(id));
+        List<Comment> comments = commentMapper.selectByExample(example);
+        setImgAndUser(comments);
+        if (comments.size()!=0) {
+            return comments.get(0);
+        }
+        return null;
+    }
+
+    //根据id查询
+    @Override
+    public float selectGradeAvg(Long id) {
+        float sumGrade = commentMapper.selectAvgById(id);
+        return sumGrade;
     }
 }

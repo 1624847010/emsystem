@@ -1,8 +1,9 @@
 package com.em.service.impl;
 
+import com.em.mapper.CommentMapper;
+import com.em.mapper.GoodsMapper;
 import com.em.mapper.MerchantMapper;
-import com.em.service.FileService;
-import com.em.service.MerchantService;
+import com.em.service.*;
 import com.em.vo.File;
 import com.em.vo.Merchant;
 import com.em.vo.MerchantExample;
@@ -28,6 +29,12 @@ public class MerchantServiceImpl implements MerchantService {
     private MerchantMapper merchantMapper;
     @Autowired
     private FileService fileService;
+    @Autowired
+    private CommentService commentService;
+    @Autowired
+    private GoodsService goodsService;
+    @Autowired
+    private TypeService typeService;
 
     //新增商家
     @Override
@@ -68,16 +75,39 @@ public class MerchantServiceImpl implements MerchantService {
 
     //当前身份为管理员查询所有商家列表
     @Override
-    public List<Merchant> selectMerchantList(int pageSize, int pageNum, String shopName) {
+    public List<Merchant> selectMerchantList(int pageSize, int pageNum, String shopName,Integer shopType,Integer type) {
         MerchantExample merchantExample = new MerchantExample();
+        MerchantExample.Criteria criteria = merchantExample.createCriteria();
         //根据name模糊查询
-        merchantExample.createCriteria().andShopNameLike('%'+shopName+'%');
+        criteria.andShopNameLike('%'+shopName+'%');
+        //根据分类查询商品
+        if (shopType!=0) {
+            criteria.andShopTypeEqualTo(shopType);
+        }
+        //身份为商家进行分页查询
+        if (type!=0) {
+            criteria.andUserIdEqualTo(type);
+        }
         merchantExample.setNum((pageNum-1)*pageSize);
+        merchantExample.setSize(pageSize);
         List<Merchant> merchants = merchantMapper.selectByExample(merchantExample);
         //设置图片
         setFiles(merchants);
+        //商家平均分
+        for (int i = 0; i < merchants.size(); i++) {
+            float  sumGrade = commentService.selectGradeAvg(merchants.get(i).getId());
+            if (sumGrade!=0) {
+                merchants.get(i).setSumGrade(sumGrade);
+            }
+        }
+        //商家销量
+        for (int i = 0; i < merchants.size(); i++) {
+            Integer saleCount = goodsService.selectSaleCount(merchants.get(i).getId());
+            merchants.get(i).setSaleCount(saleCount);
+        }
         return merchants;
     }
+
     //循环设置商店图片
     private void setFiles(List<Merchant> merchants) {
         for (int i = 0; i < merchants.size(); i++) {
@@ -86,25 +116,19 @@ public class MerchantServiceImpl implements MerchantService {
             file.setBusinessId(Math.toIntExact(merchants.get(i).getId()));
             file.setBusinessType(merchantType);
             List<File> list = fileService.selectFile(file);
-            merchants.get(i).setFiles(list);
+            if (list.size()!=0) {
+                merchants.get(i).setFiles(list);
+            }
             //插入商家头像
             file.setBusinessId(Math.toIntExact(merchants.get(i).getId()));
             file.setBusinessType(merchantIcon);
             list = fileService.selectFile(file);
-            merchants.get(i).setFile(list.get(0));
+            if (list.size()!=0) {
+                merchants.get(i).setFile(list.get(0));
+            }
         }
     }
-    //身份为商家进行分页查询
-    @Override
-    public List<Merchant> selectMerchantListByType(int pageSize, int pageNum, String shopName, Integer type) {
-        MerchantExample merchantExample = new MerchantExample();
-        merchantExample.createCriteria().andShopNameLike('%'+shopName+'%').andUserIdEqualTo(type);
-        merchantExample.setNum((pageNum-1)*pageSize);
-        List<Merchant> merchants = merchantMapper.selectByExample(merchantExample);
-        //循环查询图片
-        setFiles(merchants);
-        return merchants;
-    }
+
     //编辑商家信息
     @Override
     public int updateMerchant(Merchant merchant) {
@@ -115,8 +139,13 @@ public class MerchantServiceImpl implements MerchantService {
         return i;
     }
     //删除商家信息
+    @Transactional
     @Override
     public int delMerchant(Merchant merchant) {
+        int count = typeService.selectCount(merchant.getId());
+        if (count >=1) {
+            return -1;
+        }
         MerchantExample merchantExample = new MerchantExample();
         merchantExample.createCriteria().andIdEqualTo(merchant.getId());
         //删除商家
@@ -131,5 +160,24 @@ public class MerchantServiceImpl implements MerchantService {
         file.setBusinessType(merchantType);
         fileService.delFile(file);
         return i;
+    }
+
+    //根据商家id返回商家信息
+    @Override
+    public Merchant selectById(Integer shopId) {
+        MerchantExample example = new MerchantExample();
+        example.createCriteria().andIdEqualTo(Long.valueOf(shopId));
+        List<Merchant> merchants = merchantMapper.selectByExample(example);
+        setFiles(merchants);
+        return merchants.get(0);
+    }
+
+    //查询商家数量
+    @Override
+    public int selectCount(Integer id) {
+        MerchantExample example = new MerchantExample();
+        example.createCriteria().andShopTypeEqualTo(id);
+        long count = merchantMapper.countByExample(example);
+        return Math.toIntExact(count);
     }
 }

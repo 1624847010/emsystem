@@ -63,4 +63,6 @@ public interface CommentMapper {
      * @mbg.generated Tue Nov 12 16:34:42 CST 2019
      */
     int updateByExample(@Param("record") Comment record, @Param("example") CommentExample example);
+
+    Float selectAvgById(@Param("id")Long id);
 }

@@ -3,14 +3,18 @@ package com.em.service.impl;
 import com.em.mapper.GoodsMapper;
 import com.em.service.FileService;
 import com.em.service.GoodsService;
+import com.em.service.OrderfromService;
 import com.em.vo.File;
 import com.em.vo.Goods;
 import com.em.vo.GoodsExample;
+import com.em.vo.Orderfrom;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * @Author ll
@@ -24,6 +28,8 @@ public class GoodsServiceImpl implements GoodsService {
     private GoodsMapper goodsMapper;
     @Autowired
     private FileService fileService;
+    @Autowired
+    private OrderfromService orderfromService;
     //商品业务id
     private Integer goodsIcon = 3;
 
@@ -48,6 +54,7 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     //删除商品
+    @Transactional
     @Override
     public int delGoods(Goods goods) {
         GoodsExample goodsExample = new GoodsExample();
@@ -71,11 +78,11 @@ public class GoodsServiceImpl implements GoodsService {
 
     //分页查询商品
     @Override
-    public List<Goods> selectGoods(int pageSize, int pageNum, String goodsName) {
+    public List<Goods> selectGoods(int pageSize, int pageNum, String goodsName,Integer shopId) {
         GoodsExample goodsExample = new GoodsExample();
         goodsExample.setNum((pageNum - 1)* pageSize);
         goodsExample.setSize(pageSize);
-        goodsExample.createCriteria().andGoodsNameLike('%'+goodsName+'%');
+        goodsExample.createCriteria().andGoodsNameLike('%'+goodsName+'%').andShopIdEqualTo(shopId);
         List<Goods> list = goodsMapper.selectByExample(goodsExample);
         //遍历图片
         selectFile(list);
@@ -101,9 +108,61 @@ public class GoodsServiceImpl implements GoodsService {
                 file.setBusinessType(goodsIcon);
                 file.setBusinessId(Math.toIntExact(list.get(i).getId()));
                 List<File> goods = fileService.selectFile(file);
-                list.get(i).setGoodsImg(goods.get(0));
-                list.get(i).setCount(0);
+                if (goods.size()!=0) {
+                    list.get(i).setGoodsImg(goods.get(0));
+//                    list.get(i).setCount(0);
+                }
             }
         }
+    }
+
+    @Override
+    public List<Goods> selectGoodsById(String goods) {
+        List<Map<String,Long>> list = new ArrayList<>();
+        Map<String,Long> map;
+       try {
+           JSONObject json = new JSONObject(goods);
+           JSONArray goodsJson = json.getJSONArray("goods");
+           for (int i = 0; i < goodsJson.length(); i++) {
+               JSONObject jsonObject = goodsJson.getJSONObject(i);
+               Long count = Long.valueOf(jsonObject.getInt("count"));
+               Long goodsId = Long.valueOf(jsonObject.getInt("id"));
+               map = new HashMap<>();
+               map.put("count",count);
+               map.put("id",goodsId);
+               list.add(map);
+           }
+           List<Long> idList =new ArrayList<>();
+           List<Long> countList =new ArrayList<>();
+           List<Goods> goodsList;
+           for (Map<String, Long> stringObjectMap : list) {
+               idList.add(stringObjectMap.get("id"));
+               countList.add(stringObjectMap.get("count"));
+           }
+           GoodsExample example = new GoodsExample();
+            example.createCriteria().andIdIn(idList);
+           goodsList = goodsMapper.selectByExample(example);
+           for (int i = 0; i < goodsList.size(); i++) {
+               goodsList.get(i).setOrderCount(countList.get(i));
+           }
+           selectFile(goodsList);
+           return goodsList;
+       }catch (Exception e){
+           System.out.println("转换错误");
+           return null;
+       }
+    }
+
+    @Override
+    public Integer selectSaleCount(Long id) {
+        return goodsMapper.selectSaleCountByShopId(id);
+    }
+
+    @Override
+    public int selectCount(Integer id) {
+        GoodsExample example =new GoodsExample();
+        example.createCriteria().andTypeIdEqualTo(id);
+        long count = goodsMapper.countByExample(example);
+        return Math.toIntExact(count);
     }
 }

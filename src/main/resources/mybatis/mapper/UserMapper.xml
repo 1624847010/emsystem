@@ -8,7 +8,7 @@
       This element was generated on Tue Nov 12 16:34:42 CST 2019.
     -->
     <result column="id" jdbcType="BIGINT" property="id" />
-    <result column="phone" jdbcType="DOUBLE" property="phone" />
+    <result column="phone" jdbcType="BIGINT" property="phone" />
     <result column="pwd" jdbcType="VARCHAR" property="pwd" />
     <result column="type" jdbcType="INTEGER" property="type" />
     <result column="money" jdbcType="REAL" property="money" />
@@ -86,7 +86,7 @@
     -->
     insert into user (phone, pwd,
       type, money, user_name)
-    values (#{phone,jdbcType=DOUBLE}, #{pwd,jdbcType=VARCHAR},
+    values (#{phone,jdbcType=BIGINT}, #{pwd,jdbcType=VARCHAR},
       #{type,jdbcType=INTEGER}, #{money,jdbcType=REAL}, #{userName,jdbcType=VARCHAR})
   </insert>
 <!--  根据用户查询用户-->
@@ -97,6 +97,12 @@
     <if test="id !=null">
       id = #{id}
     </if>
+  </select>
+  <!--  根据用户查询用户-->
+  <select id="phoneSelect" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from user
+    where
     <if test="phone!=null">
       phone = #{phone}
     </if>
@@ -105,9 +111,6 @@
   <update id="update">
     update user
     <set>
-      <if test="phone != null">
-        phone = #{phone,jdbcType=DOUBLE},
-      </if>
       <if test="pwd != null">
         pwd = #{pwd,jdbcType=VARCHAR},
       </if>

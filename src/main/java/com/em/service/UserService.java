@@ -14,4 +14,6 @@ public interface UserService {
     int updateUser(User user);
 
     int delUser(User user);
+
+    User phoneSelect(User user);
 }

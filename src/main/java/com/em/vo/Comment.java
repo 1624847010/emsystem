@@ -3,7 +3,18 @@ package com.em.vo;
 import java.io.Serializable;
 
 public class Comment implements Serializable {
-    File img;
+    //评论用户
+    private User user;
+    //评论图片
+    private File img;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public File getImg() {
         return img;
