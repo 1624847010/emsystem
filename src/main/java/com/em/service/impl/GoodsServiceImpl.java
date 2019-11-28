@@ -71,7 +71,7 @@ public class GoodsServiceImpl implements GoodsService {
     public int updateGoods(Goods goods) {
         GoodsExample goodsExample = new GoodsExample();
         goodsExample.createCriteria().andIdEqualTo(goods.getId());
-        int i = goodsMapper.updateByExample(goods,goodsExample);
+        int i = goodsMapper.updateByExampleSelective(goods,goodsExample);
         insertIcon(goods);
         return i;
     }
@@ -110,12 +110,13 @@ public class GoodsServiceImpl implements GoodsService {
                 List<File> goods = fileService.selectFile(file);
                 if (goods.size()!=0) {
                     list.get(i).setGoodsImg(goods.get(0));
-//                    list.get(i).setCount(0);
+                    //？？？？
+                    list.get(i).setCount(0);
                 }
             }
         }
     }
-
+    //根据json查询商品与数量
     @Override
     public List<Goods> selectGoodsById(String goods) {
         List<Map<String,Long>> list = new ArrayList<>();
@@ -152,17 +153,27 @@ public class GoodsServiceImpl implements GoodsService {
            return null;
        }
     }
-
+    //查询商品销售数量
     @Override
     public Integer selectSaleCount(Long id) {
         return goodsMapper.selectSaleCountByShopId(id);
     }
-
+    //根据id查询商品数量
     @Override
     public int selectCount(Integer id) {
         GoodsExample example =new GoodsExample();
         example.createCriteria().andTypeIdEqualTo(id);
         long count = goodsMapper.countByExample(example);
         return Math.toIntExact(count);
+    }
+
+    //根据商品id查询商品信息
+    @Override
+    public List<Goods> selectGoodsInfo(Integer id) {
+        GoodsExample example = new GoodsExample();
+        example.createCriteria().andIdEqualTo(Long.valueOf(id));
+        List<Goods> goodsList = goodsMapper.selectByExample(example);
+        selectFile(goodsList);
+        return goodsList;
     }
 }

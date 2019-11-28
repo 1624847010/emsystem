@@ -16,9 +16,12 @@ public interface GoodsService {
     //根据分类查询goodsList
     List<Goods> selectGoodsByType(int shopId,int typeId);
 
+    //根据json查询商品与数量
     List<Goods> selectGoodsById(String goods);
     //查询销售数量
     Integer selectSaleCount(Long id);
 
     int selectCount(Integer id);
+    //根据商品id查询商品信息
+    List<Goods> selectGoodsInfo(Integer id);
 }

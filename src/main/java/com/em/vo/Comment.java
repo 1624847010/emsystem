@@ -3,10 +3,20 @@ package com.em.vo;
 import java.io.Serializable;
 
 public class Comment implements Serializable {
+    //订单id
+    private Integer orderId;
     //评论用户
     private User user;
     //评论图片
     private File img;
+
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
 
     public User getUser() {
         return user;

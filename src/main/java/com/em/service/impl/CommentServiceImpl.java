@@ -3,11 +3,9 @@ package com.em.service.impl;
 import com.em.mapper.CommentMapper;
 import com.em.service.CommentService;
 import com.em.service.FileService;
+import com.em.service.OrderfromService;
 import com.em.service.UserService;
-import com.em.vo.Comment;
-import com.em.vo.CommentExample;
-import com.em.vo.File;
-import com.em.vo.User;
+import com.em.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +26,8 @@ public class CommentServiceImpl implements CommentService {
     private FileService fileService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private OrderfromService orderfromService;
     //评论管理的业务id
     private Integer commentType = 4;
 
@@ -68,7 +68,7 @@ public class CommentServiceImpl implements CommentService {
             User user = new User();
             user.setId(Long.valueOf(comments.get(i).getUserId()));
             User theUser = userService.loginSelect(user);
-            if(list != null){
+            if(list.size() != 0){
                 comments.get(i).setImg(list.get(0));
             }
             comments.get(i).setUser(theUser);
@@ -86,6 +86,12 @@ public class CommentServiceImpl implements CommentService {
             file.setFileUrl(comment.getImg().getFileUrl());
             file.setFileId(comment.getImg().getFileId());
             fileService.saveFile(file);
+        }
+        if (comment.getId()!=null&&comment.getOrderId()!=null) {
+            Orderfrom orderfrom = new Orderfrom();
+            orderfrom.setId(Long.valueOf(comment.getOrderId()));
+            orderfrom.setIsClose(Math.toIntExact(comment.getId()));
+            orderfromService.updateOrder(orderfrom);
         }
         return i;
     }

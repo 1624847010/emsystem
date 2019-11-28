@@ -28,15 +28,16 @@ public class OrderfromController {
 
     @ApiOperation(value = "商家查询订单")
     @GetMapping(value = "/listByShop")
-    public ResponseEntity<BaseResponse<Orderfrom>> getListByShop(@RequestParam Integer page,
-                                                                 @RequestParam Integer limit,
-                                                                 @RequestParam Integer isSend,
-                                                                 @RequestParam Integer isComment,
-                                                                 @RequestParam Date time,
+    public ResponseEntity<BaseResponse<Orderfrom>> getListByShop(@RequestParam(defaultValue = "1") Integer page,
+                                                                 @RequestParam(defaultValue = "10") Integer limit,
+                                                                 @RequestParam(defaultValue = "-1") Integer isSend,
+                                                                 @RequestParam(defaultValue = "-1") Integer isComment,
+                                                                 @RequestParam(defaultValue = "1970/01/01") Date startTime,
+                                                                 @RequestParam(defaultValue = "2050/01/01") Date endTime,
                                                                  @RequestParam Integer shopId){
         try {
             //获取用户列表
-            List<Orderfrom> orderfromList = service.getListByShop(page,limit,isSend,isComment,time,shopId);
+            List<Orderfrom> orderfromList = service.getListByShop(page,limit,isSend,isComment,startTime,endTime,shopId);
             return BaseResponse.generateOKListResponseEntity(orderfromList);
         }catch (Exception e){
             return BaseResponse.generateBadResponseEntity(500,"服务器内部错误","");
@@ -44,10 +45,12 @@ public class OrderfromController {
     }
     @ApiOperation(value = "用户查询订单")
     @GetMapping(value = "/listByUser")
-    public ResponseEntity<BaseResponse<Orderfrom>> listByUser(@RequestParam(value = "userId") Integer userId){
+    public ResponseEntity<BaseResponse<Orderfrom>> listByUser(@RequestParam(defaultValue = "1") Integer page,
+                                                              @RequestParam(defaultValue = "10") Integer limit,
+                                                              @RequestParam Integer userId){
 //        try {
             //获取用户列表
-            List<Orderfrom> orderfromList = service.listByUser(userId);
+            List<Orderfrom> orderfromList = service.listByUser(userId,page,limit);
             return BaseResponse.generateOKListResponseEntity(orderfromList);
 //        }catch (Exception e){
 //            return BaseResponse.generateBadResponseEntity(500,"服务器内部错误","");

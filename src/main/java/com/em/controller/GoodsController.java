@@ -64,4 +64,10 @@ public class GoodsController {
         List<Goods> list = goodsService.selectGoods(pageSize,pageNum,goodsName,shopId);
         return BaseResponse.generateOKListResponseEntity(list);
     }
+    @ApiOperation(value = "根据商品id查询商品信息")
+    @GetMapping("/selectGoodsById")
+    public ResponseEntity<BaseResponse<Goods>> selectGoodsById(@RequestParam() Integer id){
+        List<Goods> list = goodsService.selectGoodsInfo(id);
+        return BaseResponse.generateOKListResponseEntity(list);
+    }
 }

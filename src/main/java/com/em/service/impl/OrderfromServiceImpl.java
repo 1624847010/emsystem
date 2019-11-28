@@ -35,12 +35,20 @@ public class OrderfromServiceImpl implements OrderfromService {
     private MerchantService merchantService;
 
     @Override
-    public List<Orderfrom> getListByShop(Integer page, Integer limit, Integer isSend, Integer isComment, Date time, Integer shopId) {
+    public List<Orderfrom> getListByShop(Integer page, Integer limit, Integer isSend, Integer isComment,Date startTime,Date endTime, Integer shopId) {
         OrderfromExample example = new OrderfromExample();
-        example.setPage(page);
+        example.setPage((page-1)*limit);
         example.setLimit(limit);
         example.setOrderByClause("start_time desc");
-        example.createCriteria().andIsSendEqualTo(isSend).andIsCommentEqualTo(isComment).andShopIdEqualTo(shopId).andStartTimeEqualTo(time);
+        OrderfromExample.Criteria criteria = example.createCriteria();
+        if (isSend != -1) {
+            criteria.andIsSendEqualTo(isSend);
+        }
+        if (isComment != -1) {
+            criteria.andIsCommentEqualTo(isComment);
+        }
+        criteria.andShopIdEqualTo(shopId);
+        criteria.andStartTimeBetween(startTime,endTime);
         List<Orderfrom> orderfroms = mapper.selectByExample(example);
         setAddress(orderfroms);
         return orderfroms;
@@ -68,9 +76,11 @@ public class OrderfromServiceImpl implements OrderfromService {
     }
 
     @Override
-    public List<Orderfrom> listByUser(Integer userId) {
+    public List<Orderfrom> listByUser(Integer userId,Integer page,Integer limit) {
         OrderfromExample example = new OrderfromExample();
         example.setOrderByClause("start_time desc");
+        example.setPage((page-1)*limit);
+        example.setLimit(limit);
         example.createCriteria().andUserIdEqualTo(userId);
         List<Orderfrom> orderfroms = mapper.selectByExample(example);
         setAddress(orderfroms);

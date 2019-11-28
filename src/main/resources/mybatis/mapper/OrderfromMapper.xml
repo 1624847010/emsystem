@@ -115,6 +115,9 @@
     <if test="orderByClause != null">
       order by ${orderByClause}
     </if>
+    <if test="page!=null and limit!=null">
+      limit #{page},#{limit}
+    </if>
   </select>
   <delete id="deleteByExample" parameterType="com.em.vo.OrderfromExample">
     <!--

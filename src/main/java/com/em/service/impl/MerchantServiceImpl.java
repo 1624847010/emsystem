@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -96,9 +97,9 @@ public class MerchantServiceImpl implements MerchantService {
         //商家平均分
         for (int i = 0; i < merchants.size(); i++) {
             float  sumGrade = commentService.selectGradeAvg(merchants.get(i).getId());
-            if (sumGrade!=0) {
-                merchants.get(i).setSumGrade(sumGrade);
-            }
+            DecimalFormat decimalFormat = new DecimalFormat("0.00");
+            String format = decimalFormat.format(sumGrade);
+            merchants.get(i).setSumGrade(Float.parseFloat(format));
         }
         //商家销量
         for (int i = 0; i < merchants.size(); i++) {
