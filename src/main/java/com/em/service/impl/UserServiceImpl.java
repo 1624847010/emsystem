@@ -6,6 +6,7 @@ import com.em.service.UserService;
 import com.em.vo.File;
 import com.em.vo.User;
 import com.em.vo.UserExample;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,8 +32,9 @@ public class UserServiceImpl implements UserService {
         UserExample userExample = new UserExample();
         //通过模糊姓名查询查询
         userExample.createCriteria().andUserNameLike('%'+name+'%');
-        int pageNo = (pageNum-1)*pageSize;
-        userExample.setPageNum(pageNo);
+//        int pageNo = (pageNum-1)*pageSize;
+//        userExample.setPageNum(pageNo);
+        PageHelper.startPage(pageNum,pageSize);
         userExample.setSize(pageSize);
         return mapper.selectByExample(userExample);
     }

@@ -7,6 +7,7 @@ import com.em.service.*;
 import com.em.vo.File;
 import com.em.vo.Merchant;
 import com.em.vo.MerchantExample;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,8 +90,9 @@ public class MerchantServiceImpl implements MerchantService {
         if (type!=0) {
             criteria.andUserIdEqualTo(type);
         }
-        merchantExample.setNum((pageNum-1)*pageSize);
-        merchantExample.setSize(pageSize);
+//        merchantExample.setNum((pageNum-1)*pageSize);
+//        merchantExample.setSize(pageSize);
+        PageHelper.startPage(pageNum,pageSize);
         List<Merchant> merchants = merchantMapper.selectByExample(merchantExample);
         //设置图片
         setFiles(merchants);

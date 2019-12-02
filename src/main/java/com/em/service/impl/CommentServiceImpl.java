@@ -6,6 +6,7 @@ import com.em.service.FileService;
 import com.em.service.OrderfromService;
 import com.em.service.UserService;
 import com.em.vo.*;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,8 +36,9 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<Comment> getCommentList(Integer shopId, Integer id,Integer pageSize,Integer pageNum) {
         CommentExample example = new CommentExample();
-        example.setNum((pageNum-1)*pageSize);
-        example.setSize(pageSize);
+//        example.setNum((pageNum-1)*pageSize);
+//        example.setSize(pageSize);
+        PageHelper.startPage(pageNum,pageSize);
         example.setOrderByClause("id desc");
         switch (id){
             //好评

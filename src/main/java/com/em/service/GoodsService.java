@@ -7,7 +7,7 @@ import java.util.List;
 public interface GoodsService {
     int addGoods(Goods goods);
 
-    int delGoods(Goods goods);
+//    int delGoods(Goods goods);
 
     int updateGoods(Goods goods);
 

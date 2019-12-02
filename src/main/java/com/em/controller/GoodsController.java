@@ -35,16 +35,17 @@ public class GoodsController {
             return BaseResponse.generateBadResponseEntity("新增失败","");
         }
     }
-    @ApiOperation(value = "删除商品")
-    @DeleteMapping("/delGoods")
+    @ApiOperation(value = "下架商品/重新上架")
+    @PostMapping("/delGoods")
     public ResponseEntity<BaseResponse<Goods>> delGoods(@RequestBody Goods goods){
-        int count = goodsService.delGoods(goods);
+        int count = goodsService.updateGoods(goods);
         if (count > 0) {
-            return BaseResponse.generateOKResponseEntity("删除成功","");
+            return BaseResponse.generateOKResponseEntity("下架成功","");
         }else {
-            return BaseResponse.generateBadResponseEntity("删除失败","");
+            return BaseResponse.generateBadResponseEntity("下架失败","");
         }
     }
+
     @ApiOperation(value = "编辑商品")
     @PutMapping("/updateGoods")
     public ResponseEntity<BaseResponse<Goods>> updateGoods(@RequestBody Goods goods){

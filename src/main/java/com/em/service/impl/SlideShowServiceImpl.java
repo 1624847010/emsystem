@@ -6,6 +6,7 @@ import com.em.service.SlideShowService;
 import com.em.vo.File;
 import com.em.vo.Slideshow;
 import com.em.vo.SlideshowExample;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +28,9 @@ public class SlideShowServiceImpl implements SlideShowService {
     @Override
     public List<Slideshow> getSlideshowList(Integer page, Integer limit, Integer status) {
         SlideshowExample example = new SlideshowExample();
-        example.setPage(page);
-        example.setLimit(limit);
+//        example.setPage(page);
+//        example.setLimit(limit);
+        PageHelper.startPage(page,limit);
         example.createCriteria().andStatusEqualTo(status);
         List<Slideshow> slideshows = mapper.selectByExample(example);
         for (int i = 0; i < slideshows.size(); i++) {

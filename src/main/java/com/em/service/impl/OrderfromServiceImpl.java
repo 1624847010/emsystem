@@ -9,6 +9,7 @@ import com.em.service.GoodsService;
 import com.em.service.MerchantService;
 import com.em.service.OrderfromService;
 import com.em.vo.*;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,8 +38,9 @@ public class OrderfromServiceImpl implements OrderfromService {
     @Override
     public List<Orderfrom> getListByShop(Integer page, Integer limit, Integer isSend, Integer isComment,Date startTime,Date endTime, Integer shopId) {
         OrderfromExample example = new OrderfromExample();
-        example.setPage((page-1)*limit);
-        example.setLimit(limit);
+//        example.setPage((page-1)*limit);
+//        example.setLimit(limit);
+        PageHelper.startPage(page,limit);
         example.setOrderByClause("start_time desc");
         OrderfromExample.Criteria criteria = example.createCriteria();
         if (isSend != -1) {
@@ -79,8 +81,9 @@ public class OrderfromServiceImpl implements OrderfromService {
     public List<Orderfrom> listByUser(Integer userId,Integer page,Integer limit) {
         OrderfromExample example = new OrderfromExample();
         example.setOrderByClause("start_time desc");
-        example.setPage((page-1)*limit);
-        example.setLimit(limit);
+//        example.setPage((page-1)*limit);
+//        example.setLimit(limit);
+        PageHelper.startPage(page,limit);
         example.createCriteria().andUserIdEqualTo(userId);
         List<Orderfrom> orderfroms = mapper.selectByExample(example);
         setAddress(orderfroms);

@@ -8,6 +8,7 @@ import com.em.vo.File;
 import com.em.vo.Goods;
 import com.em.vo.GoodsExample;
 import com.em.vo.Orderfrom;
+import com.github.pagehelper.PageHelper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,6 @@ public class GoodsServiceImpl implements GoodsService {
     private GoodsMapper goodsMapper;
     @Autowired
     private FileService fileService;
-    @Autowired
-    private OrderfromService orderfromService;
     //商品业务id
     private Integer goodsIcon = 3;
 
@@ -54,18 +53,19 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     //删除商品
-    @Transactional
-    @Override
-    public int delGoods(Goods goods) {
-        GoodsExample goodsExample = new GoodsExample();
-        goodsExample.createCriteria().andIdEqualTo(goods.getId());
-        int i = goodsMapper.deleteByExample(goodsExample);
-        File file = new File();
-        file.setBusinessId(Math.toIntExact(goods.getId()));
-        file.setBusinessType(goodsIcon);
-        fileService.delFile(file);
-        return i;
-    }
+//    @Transactional
+//    @Override
+//    public int delGoods(Goods goods) {
+//        GoodsExample goodsExample = new GoodsExample();
+//        goodsExample.createCriteria().andIdEqualTo(goods.getId());
+//        int i = goodsMapper.deleteByExample(goodsExample);
+//        File file = new File();
+//        file.setBusinessId(Math.toIntExact(goods.getId()));
+//        file.setBusinessType(goodsIcon);
+//        fileService.delFile(file);
+//        return i;
+//    }
+
     //编辑商品
     @Override
     public int updateGoods(Goods goods) {
@@ -80,8 +80,9 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     public List<Goods> selectGoods(int pageSize, int pageNum, String goodsName,Integer shopId) {
         GoodsExample goodsExample = new GoodsExample();
-        goodsExample.setNum((pageNum - 1)* pageSize);
-        goodsExample.setSize(pageSize);
+//        goodsExample.setNum((pageNum - 1)* pageSize);
+//        goodsExample.setSize(pageSize);
+        PageHelper.startPage(pageNum,pageSize);
         goodsExample.createCriteria().andGoodsNameLike('%'+goodsName+'%').andShopIdEqualTo(shopId);
         List<Goods> list = goodsMapper.selectByExample(goodsExample);
         //遍历图片
@@ -93,7 +94,7 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     public List<Goods> selectGoodsByType(int shopId, int typeId) {
         GoodsExample goodsExample = new GoodsExample();
-        goodsExample.createCriteria().andShopIdEqualTo(shopId).andTypeIdEqualTo(typeId);
+        goodsExample.createCriteria().andShopIdEqualTo(shopId).andTypeIdEqualTo(typeId).andGoodsStatusEqualTo(0);
         List<Goods> list = goodsMapper.selectByExample(goodsExample);
         //遍历图片
         selectFile(list);
