@@ -38,4 +38,4 @@ pagehelper:
 # fdfs
 fdfs:
   tracker-list: 49.234.6.119:22122
-  hostPort: http://fdfs.litongxin.cn/
+  hostPort: http://49.234.6.119:8000/

@@ -11,7 +11,7 @@ public interface GoodsService {
 
     int updateGoods(Goods goods);
 
-    List<Goods> selectGoods(int pageSize, int pageNum, String goodsName,Integer shopId);
+    List<Goods> selectGoods(int pageSize, int pageNum, String goodsName,Integer shopId,Integer type);
 
     //根据分类查询goodsList
     List<Goods> selectGoodsByType(int shopId,int typeId);

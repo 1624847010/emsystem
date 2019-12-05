@@ -121,7 +121,14 @@
         user_name = #{userName,jdbcType=VARCHAR},
       </if>
     </set>
-    where id =#{id}
+    where
+    1=2
+    <if test="id != null">
+      or id =#{id}
+    </if>
+     <if test="phone != null">
+     or phone = #{phone}
+     </if>
   </update>
 <!--  删除用户-->
   <delete id="delUser">

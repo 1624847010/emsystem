@@ -45,6 +45,7 @@ public class MerchantController {
                                                                      @RequestParam(defaultValue = "0")Integer shopType){//分类id
             //当前身份为管理员查询所有商家列表
             List<Merchant> list = merchantService.selectMerchantList(pageSize,pageNum,shopName,shopType,type);
+//            int count = merchantService.allCount();
             return BaseResponse.generateOKListResponseEntity(list);
     }
     //修改商家信息

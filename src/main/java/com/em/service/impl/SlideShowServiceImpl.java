@@ -23,15 +23,18 @@ public class SlideShowServiceImpl implements SlideShowService {
     private SlideshowMapper mapper;
     @Autowired
     private FileService fileService;
-    private Integer SLIDETYPE = 5;
+    //轮播图id
+    private static final Integer SLIDETYPE = 5;
 
     @Override
     public List<Slideshow> getSlideshowList(Integer page, Integer limit, Integer status) {
         SlideshowExample example = new SlideshowExample();
-//        example.setPage(page);
-//        example.setLimit(limit);
+        SlideshowExample.Criteria criteria = example.createCriteria();
         PageHelper.startPage(page,limit);
-        example.createCriteria().andStatusEqualTo(status);
+        //查询全部轮播图
+        if (status != -1){
+            criteria.andStatusEqualTo(status);
+        }
         List<Slideshow> slideshows = mapper.selectByExample(example);
         for (int i = 0; i < slideshows.size(); i++) {
             File file = new File();

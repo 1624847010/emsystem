@@ -11,7 +11,6 @@ import com.em.vo.Type;
 import com.em.vo.TypeExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -30,12 +29,21 @@ public class TypeServiceImpl implements TypeService {
     private MerchantService merchantService;
     @Autowired
     private FileService fileService;
+    //分类图片
     private static final Integer CLASSIFICATIONTYPE = 7;
 
     @Override
     public int addType(Type type) {
         int i = typeMapper.insertSelective(type);
+        //插入商家分类则带图片
         if (type.getType() == 0 && type.getShopId() == 0) {
+            insertImg(type);
+        }
+        return i;
+    }
+    //插入图片
+    private void insertImg(Type type) {
+        if (type.getFile()!=null) {
             File file = new File();
             file.setBusinessId(type.getId());
             file.setBusinessType(CLASSIFICATIONTYPE);
@@ -43,20 +51,20 @@ public class TypeServiceImpl implements TypeService {
             file.setFileId(type.getFile().getFileId());
             fileService.saveFile(file);
         }
-        return i;
     }
 
-    @Transactional
     @Override
     public int delType(Type type) {
+        //分类下是否有商家，有则无法删除
         if (type.getShopId() == 0) {
             int count = merchantService.selectCount(type.getId());
             if (count >= 1) {
                 return 2;
             }
         }else {
+            //分类下是否有商品，有则无法删除
             int count = goodsService.selectCount(type.getId());
-            if (count >= 1) {
+            if (count > 0) {
                 return 3;
             }
         }
@@ -71,9 +79,11 @@ public class TypeServiceImpl implements TypeService {
         TypeExample typeExample = new TypeExample();
         typeExample.createCriteria().andIdEqualTo(type.getId());
         int i = typeMapper.updateByExampleSelective(type, typeExample);
+        insertImg(type);
         return i;
     }
 
+    //商家分类
     @Override
     public List<Type> selectShopType() {
         TypeExample typeExample = new TypeExample();
@@ -91,6 +101,7 @@ public class TypeServiceImpl implements TypeService {
         return list;
     }
 
+    //商品分类
     @Override
     public List<Type> selectGoodsType(int shopId) {
         TypeExample typeExample = new TypeExample();
@@ -109,5 +120,15 @@ public class TypeServiceImpl implements TypeService {
         example.createCriteria().andShopIdEqualTo(Math.toIntExact(id));
         long count = typeMapper.countByExample(example);
         return Math.toIntExact(count);
+    }
+
+    //根据id查询分类名称
+    @Override
+    public String selectTypeName(Integer id) {
+        TypeExample example = new TypeExample();
+        example.createCriteria().andIdEqualTo(id);
+        List<Type> list = typeMapper.selectByExample(example);
+        String typeName = list.get(0).getTypeName();
+        return typeName;
     }
 }

@@ -56,6 +56,24 @@ public class BaseResponse<T> {
         }
         return ResponseEntity.ok().body(new BaseResponse<>(0, "Success", data));
     }
+    //请求成功(List专用)
+    public static ResponseEntity generateOKListResponseEntity(List list,Integer total) {
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("list", list);
+        if (list instanceof Page) {
+            Page page = (Page) list;
+            data.put("total", total);
+            data.put("page", page.getPageNum());
+            data.put("limit", page.getPageSize());
+            data.put("pages", page.getPages());
+        } else {
+            data.put("total", total);
+            data.put("page", 1);
+            data.put("limit", list.size());
+            data.put("pages", 1);
+        }
+        return ResponseEntity.ok().body(new BaseResponse<>(0, "Success", data));
+    }
     public static ResponseEntity generateOKListResponseEntity(List list, List pagedList) {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("list", list);

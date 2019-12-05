@@ -8,6 +8,7 @@ import com.em.vo.File;
 import com.em.vo.Merchant;
 import com.em.vo.MerchantExample;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,10 +24,6 @@ import java.util.List;
 @Service
 @Transactional
 public class MerchantServiceImpl implements MerchantService {
-    //商家介绍业务属性为1
-    private Integer merchantType = 1;
-    //商家头像业务属性为2
-    private Integer merchantIcon = 2;
     @Autowired
     private MerchantMapper merchantMapper;
     @Autowired
@@ -37,6 +34,10 @@ public class MerchantServiceImpl implements MerchantService {
     private GoodsService goodsService;
     @Autowired
     private TypeService typeService;
+    //商家介绍业务属性为1
+    private static final Integer MERCHANTTYPE = 1;
+    //商家头像业务属性为2
+    private static final Integer MERCHANTICON = 2;
 
     //新增商家
     @Override
@@ -54,13 +55,13 @@ public class MerchantServiceImpl implements MerchantService {
 
     private void insertImg(Merchant merchant) {
         //插入商家详情图片
-        if (merchant.getFiles().size() > 0) {
+        if (merchant.getFiles()!=null) {
             for (int i = 0; i < merchant.getFiles().size(); i++) {
                 File file = merchant.getFiles().get(i);
                 file.setFileId(merchant.getFiles().get(i).getFileId());
                 file.setFileUrl(merchant.getFiles().get(i).getFileUrl());
                 file.setBusinessId(Math.toIntExact(merchant.getId()));
-                file.setBusinessType(merchantType);
+                file.setBusinessType(MERCHANTTYPE);
                 fileService.saveFile(file);
             }
         }
@@ -70,7 +71,7 @@ public class MerchantServiceImpl implements MerchantService {
             file.setFileUrl(merchant.getFile().getFileUrl());
             file.setFileId(merchant.getFile().getFileId());
             file.setBusinessId(Math.toIntExact(merchant.getId()));
-            file.setBusinessType(merchantIcon);
+            file.setBusinessType(MERCHANTICON);
             fileService.saveFile(file);
         }
     }
@@ -90,8 +91,6 @@ public class MerchantServiceImpl implements MerchantService {
         if (type!=0) {
             criteria.andUserIdEqualTo(type);
         }
-//        merchantExample.setNum((pageNum-1)*pageSize);
-//        merchantExample.setSize(pageSize);
         PageHelper.startPage(pageNum,pageSize);
         List<Merchant> merchants = merchantMapper.selectByExample(merchantExample);
         //设置图片
@@ -111,20 +110,20 @@ public class MerchantServiceImpl implements MerchantService {
         return merchants;
     }
 
-    //循环设置商店图片
+    //循环遍历商店图片
     private void setFiles(List<Merchant> merchants) {
         for (int i = 0; i < merchants.size(); i++) {
             //插入商家详情图片
             File file = new File();
             file.setBusinessId(Math.toIntExact(merchants.get(i).getId()));
-            file.setBusinessType(merchantType);
+            file.setBusinessType(MERCHANTTYPE);
             List<File> list = fileService.selectFile(file);
             if (list.size()!=0) {
                 merchants.get(i).setFiles(list);
             }
             //插入商家头像
             file.setBusinessId(Math.toIntExact(merchants.get(i).getId()));
-            file.setBusinessType(merchantIcon);
+            file.setBusinessType(MERCHANTICON);
             list = fileService.selectFile(file);
             if (list.size()!=0) {
                 merchants.get(i).setFile(list.get(0));
@@ -156,11 +155,11 @@ public class MerchantServiceImpl implements MerchantService {
         //删除商家详情图片
         File file = new File();
         file.setBusinessId(Math.toIntExact(merchant.getId()));
-        file.setBusinessType(merchantIcon);
+        file.setBusinessType(MERCHANTICON);
         fileService.delFile(file);
         //删除商家头像
         file.setBusinessId(Math.toIntExact(merchant.getId()));
-        file.setBusinessType(merchantType);
+        file.setBusinessType(MERCHANTTYPE);
         fileService.delFile(file);
         return i;
     }

@@ -23,12 +23,12 @@ public class SlideShowController {
     @Autowired
     private SlideShowService service;
 
-    //status是否禁用（0为未禁用，1为禁用）
+    //status是否禁用（0为未禁用，1为禁用,-1为全部）
     @ApiOperation(value = "查询轮图列表")
     @GetMapping(value = "/list")
     public ResponseEntity<BaseResponse<Slideshow>> getSlideshowList(@RequestParam(defaultValue = "1") Integer page,
                                                                     @RequestParam(defaultValue = "10") Integer limit,
-                                                                    @RequestParam(defaultValue = "0") Integer status){
+                                                                    @RequestParam(defaultValue = "-1") Integer status){
         try {
             //获取用户列表
             List<Slideshow> slideshowsList = service.getSlideshowList(page,limit,status);

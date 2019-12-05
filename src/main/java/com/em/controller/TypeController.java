@@ -37,6 +37,7 @@ public class TypeController {
     @DeleteMapping("/delType")
     public ResponseEntity<BaseResponse<Type>> delType(@RequestBody Type type){
         int count = typeService.delType(type);
+        System.out.println(count);
         switch (count){
             case 1:
                 return BaseResponse.generateOKResponseEntity("删除成功","");
@@ -58,10 +59,11 @@ public class TypeController {
             return BaseResponse.generateBadResponseEntity("修改失败","");
         }
     }
+    //为0查询商铺分类，不为0则根据商家id查询商品分类
     @ApiOperation(value = "查询分类")
     @GetMapping("/selectType")
-    public ResponseEntity<BaseResponse<Type>> selectType(@RequestParam("type")int type,@RequestParam("shopId")int shopId){
-        if (type == 0) {
+    public ResponseEntity<BaseResponse<Type>> selectType(@RequestParam(defaultValue = "0")int shopId){
+        if (shopId == 0) {
             //商铺分类
             List<Type> list = typeService.selectShopType();
             return BaseResponse.generateOKResponseEntity("查询成功",list);

@@ -16,4 +16,6 @@ public interface TypeService {
     List<Type> selectGoodsType(int shopId);
 
     int selectCount(Long id);
+
+    String selectTypeName(Integer id);
 }

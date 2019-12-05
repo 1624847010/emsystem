@@ -56,13 +56,15 @@ public class GoodsController {
             return BaseResponse.generateBadResponseEntity("编辑失败","");
         }
     }
+    //后台查询传入type,不为0则查询上下架商品，为0则只显示上架商品
     @ApiOperation(value = "查询商品列表")
     @GetMapping("/selectGoods")
     public ResponseEntity<BaseResponse<Goods>> selectGoods(@RequestParam(defaultValue = "10") Integer pageSize,
                                                            @RequestParam(defaultValue = "1") Integer pageNum,
                                                            @RequestParam(defaultValue = "")String goodsName,
+                                                           @RequestParam(defaultValue = "0")Integer type,
                                                            @RequestParam() Integer shopId){
-        List<Goods> list = goodsService.selectGoods(pageSize,pageNum,goodsName,shopId);
+        List<Goods> list = goodsService.selectGoods(pageSize,pageNum,goodsName,shopId,type);
         return BaseResponse.generateOKListResponseEntity(list);
     }
     @ApiOperation(value = "根据商品id查询商品信息")

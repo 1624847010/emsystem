@@ -1,8 +1,6 @@
 package com.em.service.impl;
 
 import com.em.mapper.AddressMapper;
-import com.em.mapper.CommentMapper;
-import com.em.mapper.GoodsMapper;
 import com.em.mapper.OrderfromMapper;
 import com.em.service.CommentService;
 import com.em.service.GoodsService;
@@ -13,7 +11,6 @@ import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -38,14 +35,16 @@ public class OrderfromServiceImpl implements OrderfromService {
     @Override
     public List<Orderfrom> getListByShop(Integer page, Integer limit, Integer isSend, Integer isComment,Date startTime,Date endTime, Integer shopId) {
         OrderfromExample example = new OrderfromExample();
-//        example.setPage((page-1)*limit);
-//        example.setLimit(limit);
+        //设置分页
         PageHelper.startPage(page,limit);
+        //排序
         example.setOrderByClause("start_time desc");
         OrderfromExample.Criteria criteria = example.createCriteria();
+        //判断是否送到
         if (isSend != -1) {
             criteria.andIsSendEqualTo(isSend);
         }
+        //判断是否评论
         if (isComment != -1) {
             criteria.andIsCommentEqualTo(isComment);
         }
@@ -80,9 +79,8 @@ public class OrderfromServiceImpl implements OrderfromService {
     @Override
     public List<Orderfrom> listByUser(Integer userId,Integer page,Integer limit) {
         OrderfromExample example = new OrderfromExample();
+        //排序
         example.setOrderByClause("start_time desc");
-//        example.setPage((page-1)*limit);
-//        example.setLimit(limit);
         PageHelper.startPage(page,limit);
         example.createCriteria().andUserIdEqualTo(userId);
         List<Orderfrom> orderfroms = mapper.selectByExample(example);

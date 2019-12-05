@@ -30,15 +30,15 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     private OrderfromService orderfromService;
     //评论管理的业务id
-    private Integer commentType = 4;
+    private static final Integer COMMENTTYPE = 4;
 
 
     @Override
     public List<Comment> getCommentList(Integer shopId, Integer id,Integer pageSize,Integer pageNum) {
         CommentExample example = new CommentExample();
-//        example.setNum((pageNum-1)*pageSize);
-//        example.setSize(pageSize);
+        //分页
         PageHelper.startPage(pageNum,pageSize);
+        //排序
         example.setOrderByClause("id desc");
         switch (id){
             //好评
@@ -64,7 +64,7 @@ public class CommentServiceImpl implements CommentService {
             //插入图片
             File file = new File();
             file.setBusinessId(Math.toIntExact(comments.get(i).getId()));
-            file.setBusinessType(commentType);
+            file.setBusinessType(COMMENTTYPE);
             List<File> list = fileService.selectFile(file);
             //插入用户
             User user = new User();
@@ -83,12 +83,13 @@ public class CommentServiceImpl implements CommentService {
         //评论是否有图片
         if (comment.getImg() != null) {
             File file = new File();
-            file.setBusinessType(commentType);
+            file.setBusinessType(COMMENTTYPE);
             file.setBusinessId(Math.toIntExact(comment.getId()));
             file.setFileUrl(comment.getImg().getFileUrl());
             file.setFileId(comment.getImg().getFileId());
             fileService.saveFile(file);
         }
+        //评论完成,绑定订单评论id
         if (comment.getId()!=null&&comment.getOrderId()!=null) {
             Orderfrom orderfrom = new Orderfrom();
             orderfrom.setId(Long.valueOf(comment.getOrderId()));
@@ -110,7 +111,7 @@ public class CommentServiceImpl implements CommentService {
         return null;
     }
 
-    //根据id查询
+    //根据id查询平均分
     @Override
     public float selectGradeAvg(Long id) {
         float sumGrade = commentMapper.selectAvgById(id);

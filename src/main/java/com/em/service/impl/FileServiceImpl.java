@@ -26,6 +26,7 @@ public class FileServiceImpl implements FileService {
     private FastFileStorageClient fastFileStorageClient;
     @Autowired
     private FileMapper fileMapper;
+    //图片服务器地址
     @Value("${fdfs.hostPort}")
     private String hostPort;
 
@@ -61,6 +62,7 @@ public class FileServiceImpl implements FileService {
             }
             return true;
         } catch (Exception e) {
+            System.out.println(e);
             return false;
         }
     }

@@ -25,6 +25,7 @@ public class UserServiceImpl implements UserService {
     private UserMapper mapper;
     @Autowired
     private FileService fileService;
+    //用户头像id
     private static final Integer USERTYPE = 6;
 
     @Override
@@ -32,10 +33,8 @@ public class UserServiceImpl implements UserService {
         UserExample userExample = new UserExample();
         //通过模糊姓名查询查询
         userExample.createCriteria().andUserNameLike('%'+name+'%');
-//        int pageNo = (pageNum-1)*pageSize;
-//        userExample.setPageNum(pageNo);
+        //分页查询
         PageHelper.startPage(pageNum,pageSize);
-        userExample.setSize(pageSize);
         return mapper.selectByExample(userExample);
     }
 
@@ -63,9 +62,11 @@ public class UserServiceImpl implements UserService {
     public int updateUser(User user) {
         //修改用户
         int update = 0;
+        //是否需要修改信息
         if (user.getUserName()!=null||user.getPwd()!=null||user.getMoney()!=null){
             update = mapper.update(user);
         }
+        //是否需要修改图片
         if (user.getFile() != null) {
             File myfile = new File();
             myfile.setBusinessId(Math.toIntExact(user.getId()));
